@@ -1,0 +1,95 @@
+
+                         Authorized Gravis BBS Nodes List
+                                     as of
+                                  May 20, 1993
+
+Name                    Location           Node No.    BBS Phone No.   Speed
+=============================================================================
+Advanced Gravis         Burnaby, Canada   *1:153/978   (604) 431-5927  V32bis
+                                          *13:900/3
+                                          *88:8101/105
+                                          %gravis.com
+Deep Cove BBS           White Rock, Canada 1:153/915   (604) 536-5859  DS
+MIDI 1040               Vancouver, Canada  1:153/7040  (604) 732-4446  V32bis
+Infinite Dreams         Vancouver, Canada  1:153/7042  (604) 733-6432  DS
+                                                       (604) 733-8193  HST
+WolfPack                Richmond, Canada   1:153/811   (604) 275-3047  DS
+T-8000 Info. System     Calgary, Canada    1:134/160   (403) 246-4487  V32bis
+Max Megabit's Data Port Halifax, Canada   *1:251/1     (902) 454-8351  DS
+                                          *1:251/2     (902) 453-5731  V32bis
+                                          *1:251/18    (902) 454-9635  2400
+Open Access BBS         Norway, Europe     2:502/284   +47-61-97945    V32bis
+The 1st Dutch MIDI BBS  Netherland, Europe 2:281/610   +31-15138754    DS
+                                                       +31-85510944    2400
+                                                       +31-349535439   2400
+Geniaal BBS 2           Netherland, Europe 14:1000/3   +31-2290-43038  V32bis
+                                                       +31-2290-45816  V32bis
+New Age System          Estonia, Europe    2:490/12    +372-2-606319   V32bis
+StarPort                Finland, Europe    2:220/630   +358-0-804-462  DS
+Data Bank BBS           Pennsylvania, USA  1:273/316   (215) 429-9455  V32bis
+The Sound Barrier       New York, USA      13:420/0    (718) 979-6629  DS
+                                                       (718) 979-9406  V32bis
+Music Connection        Texas, USA (Plano) 1:124/3109  (214) 596-2827  DS
+                                           1:124/3110  (214) 964-3743  V32bis
+CyberSpace - The Matrix Texas, USA(Carrol) 13:100/22   (214) 394-9339  V32bis
+                                           1:124/6201
+Public Image Limited    California, USA    1:161/301   (510) 831-3634  V32bis
+JoyFull Noise           Oregon, USA       *1:105/55    (503) 335-9600 &DS
+                                          *1:105/5     (503) 335-3053 ZV32bis
+I can 'C' Clearly Now!  Iowa, USA          1:290/102   (515) 472-3651  V32bis
+The Dragon's Keep       Illinios, USA      1:2430/5    (217) 634-4614  V32bis
+MultiMedia              Singapore, Asia    6:600/408   +65-2521220     V32bis
+Paranoimia-Art of Noise Victoria,Australia 3:635/541   +61-3-379-7041  V32
+
+UNOFFICIAL
+=============================================================================
+UltraSound Connection   Florida, USA      +            (813) 787-8644  DS
+
+=============================================================================
+
+NOTE(S): - All systems are No Parity, 8 Data Bits, 1 Stop bit (N81)
+         - All systems are online 24 hours/day
+         - Speeds: V32bis - 14,400 bits per second (CCITT standard)
+                   HST    - 14,400/16,800 bits per second (US Robotics Prop.)
+                   DS     - 14,400/16,800 bits per second (HST/V32bis)
+         - * - Files are File Requestable
+         - % - EMail Only.  No FTP or Telnet.
+         - & - Does not accept >= 2400 baud calls
+         - + - Files only
+         - Z - Zyxel (16.8K and 19.2K bps)
+
+About the Gravis Nodes
+------------------------------------------------------------------------------
+ All nodes are independent BBSs', and are not run or sponsored by Gravis.  As
+ such the logon procedures for each BBS may vary.  For instance, some give
+ you immediate access, while others have a probation period which may last
+ several days.  All nodes are encouraged to offer all the Gravis files and
+ messages to first time callers but this may not always be the case.
+
+ If you are interested in becoming an Authorized Gravis Node you may file
+ request or download GRAV-APP.ZIP from the Gravis BBS.
+
+Other Sources for UltraSound Files:
+------------------------------------------------------------------------------
+      CompuServe:         GO PCVENB  area #14                      71333,350
+
+      FTP Sites:          archive.epas.utoronto.ca         pub/pc/ultrasound
+                          wuarchive.wustl.edu       systems/msdos/ultrasound
+
+      Internet: UltraSound Digest:               ultrasound%itchy@dsd.es.com
+                GUS SDK Digest:                     gus-sdk%itchy@dsd.es.com
+                                                To post to tomorrow's digest
+
+
+      Request: Daily Digest Server:      ultrasound-request%itchy@dsd.es.com
+               GUS SDK Digest:              gus-sdk-request%itchy@dsd.es.com
+                                To subscribe, unsubscribe, and request files
+
+      Owner Address:                       ultrasound-owner%itchy@dsd.es.com
+                               To contact a human if the server has troubles
+
+NOTE: the %itchy and dsd domains will be removed sometime during the beginning
+      of June.  So ultrasound%itchy@dsd.es.com will become ultrasound@es.com.
+
+==============================================================================
+

@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int main(void)
+{
+   int c;
+   char destin[10];
+
+   /* Note that getchar reads from stdin and
+      is line buffered; this means it will
+      not return until you press ENTER. */
+
+   while ((c = getchar()) != '\n')
+	
+      printf("%c", c);
+      strcat(destination, (char)c);
+
+   return 0;
+}
+

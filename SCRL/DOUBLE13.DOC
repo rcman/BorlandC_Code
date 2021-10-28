@@ -1,0 +1,66 @@
+
+    DOUBLE13.DOC
+
+    Davor Slamnig (slama@slama.pub.hr)
+    11/94
+
+
+    DOUBLE13.EXE sets the VGA to mode 13h and puts it in
+    "big map" mode, providing 128K of video memory. This space is
+    large enough to contain two screen pages, which can be used for
+    double buffering. The program then does some page-flipping
+    and scrolling.
+
+    The process is much simpler and faster than using x-mode (but...)
+
+    The purpose of the test was/is to find how compatible this is
+    with various VGA cards.
+
+    So far, the (statistical) answer is, unfortunately:
+    "not very compatible".
+
+     Card:                    BIOS page flip:     Register scroll:
+------------------------------------------------------------------
+Trident 8900 / 1M                        yes            yes
+Cirrus Logic 5428 24-bit VLB / 1M        no             no  (*)
+STB W32P PCI / 1M                        yes            yes
+Trident (?) TVGA BIOS D3.0 / 512K        yes            yes (**)
+Tseng ET4000 8925CLK2B                   ?              no
+Paradise / 512K                     yes            no
+------------------------------------------------------------------
+(*) Scroll doesn't work on Cirrus Logic CLDG 5422/5424/5426 either.
+(**) Program crashes on exit.
+
+
+    About the program:
+
+    VGA is set to "big map" mode.
+    The video memory starts at a000h and is 128K long.
+    Page 2 begins at b000h. Page 1 one is filled with blue,
+    page 2 with red (system colors).
+    The program first switches pages using BIOS, then
+    does a smooth scroll through the pages using VGA
+    registers to change screen start address.
+
+    Note: The video mode is still 13h, packed -
+    one byte corresponds to one pixel.
+
+
+    What I'd like you to do is to run the program and
+    see whether it works on your card. Then mail or post
+    the result, and please include some info about your
+    card - the name, number and amount of RAM at least.
+    Also, I would like to hear about your improvements.
+
+    My address: slama@slama.pub.hr (Davor Slamnig).
+
+
+    Thanks to the people who tested the program so far:
+
+    Douglas B Clayton <dc6f+@andrew.cmu.edu>
+    rob@cimage.com (Rob Mcmillan)
+    mvalente@lnec.pt (Mario Valente)
+    tqf1397@is.nyu.edu (Timur  Fanshteyn)
+    Rob Mcmillan (rob@cimage.com)
+    Nathan Hand <h9304891@student.anu.edu.au>
+

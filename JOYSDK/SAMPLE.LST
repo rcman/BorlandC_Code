@@ -1,0 +1,293 @@
+ 
+
+                                                                                                                            PAGE   1
+                                                                                                                            02-18-92
+                                                                                                                            09:49:49
+
+ Line#  Source Line                                                                                Microsoft C Compiler Version 5.10
+
+      1  /*
+      2  Sample C code for reading joystick axis
+      3  
+      4  Joysticks & gamecards vary in their physical characteristics from one to
+      5  another.  For this reason the high state duration of joysticks in their extreme
+      6  positions must be predetermined for each joystick & gamecard combinations.
+      7  The following program will prompt the user to move the joystick to all its
+      8  extreme positions at startup time.  Axis high state duration will be recorded
+      9  at these positions for computing joystick position at a later time in the
+     10  programs.
+     11  */
+     12  
+     13  #include <conio.h>
+     14  #include <stdio.h>
+     15  
+     16  /*
+     17  Declare external functions
+     18  */
+     19  extern void get_loop_count (void);  /* Assembly language module initialization function*/
+     20  extern short read_axis (short);  /* Return axis position count function */
+     21  
+     22  /*
+     23  Declare local functions
+     24  */
+     25  short compute_axis (short, short, short);  /* Compute axis coordinate */
+     26  void display_coordinate (void);  /* Display joystick coordinate */
+     27  
+     28  /*
+     29  Declare variable
+     30  */
+     31  short stick_a_min_x;  /* Minimum high state duration for X axis of joystick A */
+     32  short stick_a_max_x;  /* Maximun high state duration for X axis of joystick A */
+     33  short stick_a_range_x;	/* Joystick A - X axis travel range */
+     34  short stick_a_min_y;  /* Minimum high state duration for Y axis of joystick A */
+     35  short stick_a_max_y;  /* Maximum high state duration for Y axis of joystick A */
+     36  short stick_a_range_y;	/* Joystick A - Y axis travel range */
+     37  short stick_b_min_x;  /* Minimum high state duration for X axis of joystick B */
+     38  short stick_b_max_x;  /* Maximun high state duration for X axis of joystick B */
+     39  short stick_b_range_x;	/* Joystick B - X axis travel range */
+     40  short stick_b_min_y;  /* Minimum high state duration for Y axis of joystick B */
+     41  short stick_b_max_y;  /* Maximum high state duration for Y axis of joystick B */
+     42  short stick_b_range_y;	/* Joystick B - Y axis travel range */
+     43  
+     44  main ()
+     45  {
+     46  	/* Initialize assembly language module by calling get_loop_count */
+     47  	get_loop_count ();
+     48  
+     49  	/* Joystick A */
+     50  	printf ("Push spacebar when joystick A is farthest to left\n");
+     51  	/* Wait for spacebar pressed */
+     52  	while (getch () != 0x20)
+     53  		;
+     54  	/* Spacebar pressed, read joystick A - X axis */
+     55  	stick_a_min_x = read_axis (0);
+     56  
+ 
+
+                                                                                                                            PAGE   2
+                                                                                                                            02-18-92
+                                                                                                                            09:49:49
+
+ Line#  Source Line                                                                                Microsoft C Compiler Version 5.10
+
+     57  	printf ("Push spacebar when joystick A is farthest to right\n");
+     58  	/* Wait for spacebar pressed */
+     59  	while (getch () != 0x20)
+     60  		;
+     61  	/* Spacebar pressed, read joystick A - X axis */
+     62  	stick_a_max_x = read_axis (0);
+     63  
+     64  	/* Compute joystick A - X axis travel range */
+     65  	stick_a_range_x = stick_a_max_x - stick_a_min_x;
+     66  
+     67  
+     68  	printf ("Push spacebar when joystick A is farthest to top\n");
+     69  	/* Wait for spacebar pressed */
+     70  	while (getch () != 0x20)
+     71  		;
+     72  	/* Spacebar pressed, read joystick A - Y axis */
+     73  	stick_a_min_y = read_axis (1);
+     74  
+     75  	printf ("Push spacebar when joystick A is farthest to bottom\n");
+     76  	/* Wait for spacebar pressed */
+     77  	while (getch () != 0x20)
+     78  		;
+     79  	/* Spacebar pressed, read joystick A - Y axis */
+     80  	stick_a_max_y = read_axis (1);
+     81  
+     82  	/* Compute joystick A - Y axis travel range */
+     83  	stick_a_range_y = stick_a_max_y - stick_a_min_y;
+     84  
+     85  
+     86  
+     87  	/* Joystick B */
+     88  	printf ("Push spacebar when joystick B is farthest to left\n");
+     89  	/* Wait for spacebar pressed */
+     90  	while (getch () != 0x20)
+     91  		;
+     92  	/* Spacebar pressed, read joystick B - X axis */
+     93  	stick_b_min_x = read_axis (2);
+     94  
+     95  	printf ("Push spacebar when joystick B is farthest to right\n");
+     96  	/* Wait for spacebar pressed */
+     97  	while (getch () != 0x20)
+     98  		;
+     99  	/* Spacebar pressed, read joystick B - X axis */
+    100  	stick_b_max_x = read_axis (2);
+    101  
+    102  	/* Compute joystick B - X axis travel range */
+    103  	stick_b_range_x = stick_b_max_x - stick_b_min_x;
+    104  
+    105  
+    106  	printf ("Push spacebar when joystick B is farthest to top\n");
+    107  	/* Wait for spacebar pressed */
+    108  	while (getch () != 0x20)
+    109  		;
+    110  	/* Spacebar pressed, read joystick B - Y axis */
+    111  	stick_b_min_y = read_axis (3);
+    112  
+ 
+
+                                                                                                                            PAGE   3
+                                                                                                                            02-18-92
+                                                                                                                            09:49:49
+
+ Line#  Source Line                                                                                Microsoft C Compiler Version 5.10
+
+    113  	printf ("Push spacebar when joystick B is farthest to bottom\n");
+    114  	/* Wait for spacebar pressed */
+    115  	while (getch () != 0x20)
+    116  		;
+    117  	/* Spacebar pressed, read joystick B - Y axis */
+    118  	stick_b_max_y = read_axis (3);
+    119  
+    120  	/* Compute joystick B - Y axis travel range */
+    121  	stick_b_range_y = stick_b_max_y - stick_b_min_y;
+    122  
+    123  
+    124  
+    125  	/* Display joystick coordinate */
+    126  	while (!kbhit ())
+    127  	      display_coordinate ();
+    128  	/* Flush keyboard buffer before quitting */
+    129  	if (getch () == 0)
+    130  		getch ();
+    131  }
+    132  
+    133  
+    134  /*
+    135  Display all 4 joystick coordinates from a range of 0 to 100
+    136  */
+    137  
+    138  void display_coordinate ()
+    139  {
+    140  	short stick_a_x, stick_a_y, stick_b_x, stick_b_y;
+    141  
+    142  	stick_a_x = read_axis (0);
+    143  	if (stick_a_x < stick_a_min_x)
+    144  		stick_a_x = stick_a_min_x;
+    145  	else
+    146  		if (stick_a_x > stick_a_max_x)
+    147  			stick_a_x = stick_a_max_x;
+    148  	if (stick_a_range_x == 0)
+    149  		printf ("         0");
+    150  	else
+    151  		printf ("%10d", compute_axis (stick_a_x, stick_a_min_x, stick_a_range_x));
+    152  
+    153  	stick_a_y = read_axis (1);
+    154  	if (stick_a_y < stick_a_min_y)
+    155  		stick_a_y = stick_a_min_y;
+    156  	else
+    157  		if (stick_a_y > stick_a_max_y)
+    158  			stick_a_y = stick_a_max_y;
+    159  	if (stick_a_range_y == 0)
+    160  		printf ("         0");
+    161  	else
+    162  		printf ("%10d", compute_axis (stick_a_y, stick_a_min_y, stick_a_range_y));
+    163  
+    164  
+    165  	stick_b_x = read_axis (2);
+    166  	if (stick_b_x < stick_b_min_x)
+    167  		stick_b_x = stick_b_min_x;
+    168  	else
+ 
+
+                                                                                                                            PAGE   4
+                                                                                                                            02-18-92
+                                                                                                                            09:49:49
+
+ Line#  Source Line                                                                                Microsoft C Compiler Version 5.10
+
+    169  		if (stick_b_x > stick_b_max_x)
+    170  			stick_b_x = stick_b_max_x;
+    171  	if (stick_b_range_x == 0)
+    172  		printf ("         0");
+    173  	else
+    174  		printf ("%10d", compute_axis (stick_b_x, stick_b_min_x, stick_b_range_x));
+    175  
+    176  	stick_b_y = read_axis (3);
+    177  	if (stick_b_y < stick_b_min_y)
+    178  		stick_b_y = stick_b_min_y;
+    179  	else
+    180  		if (stick_b_y > stick_b_max_y)
+    181  			stick_b_y = stick_b_max_y;
+    182  	if (stick_b_range_y == 0)
+    183  		printf ("         0");
+    184  	else
+    185  		printf ("%10d\n", compute_axis (stick_b_y, stick_b_min_y, stick_b_range_y));
+    186  }
+
+
+display_coordinate  Local Symbols
+
+Name                      Class   Type              Size   Offset  Register
+
+stick_b_y . . . . . . . . auto                             -0008 
+stick_a_y . . . . . . . . auto                             -0006 
+stick_b_x . . . . . . . . auto                             -0004 
+stick_a_x . . . . . . . . auto                             -0002 
+
+    187  
+    188  
+    189  /*
+    190  Compute axis coordinate from a range of 0 to 100
+    191  */
+    192  short compute_axis (axis, min, range)
+    193  short axis, min, range;
+    194  {
+    195  	return (((long) 100 * (long) (axis - min)) / (long) range);
+    196  }
+
+
+compute_axis  Local Symbols
+
+Name                      Class   Type              Size   Offset  Register
+
+axis. . . . . . . . . . . param                             0004
+min . . . . . . . . . . . param                             0006
+range . . . . . . . . . . param                             0008
+
+
+Global Symbols
+
+Name                      Class   Type              Size   Offset  
+
+compute_axis. . . . . . . global  near function      ***    02a3
+display_coordinate. . . . global  near function      ***    0147
+ 
+
+                                                                                                                            PAGE   5
+                                                                                                                            02-18-92
+                                                                                                                            09:49:49
+
+                                                                                                   Microsoft C Compiler Version 5.10
+
+
+Global Symbols
+
+Name                      Class   Type              Size   Offset  
+
+get_loop_count. . . . . . extern  near function      ***     ***
+getch . . . . . . . . . . extern  near function      ***     ***
+kbhit . . . . . . . . . . extern  near function      ***     ***
+main. . . . . . . . . . . global  near function      ***    0000
+printf. . . . . . . . . . extern  near function      ***     ***
+read_axis . . . . . . . . extern  near function      ***     ***
+stick_a_max_x . . . . . . common  int                  2     ***
+stick_a_max_y . . . . . . common  int                  2     ***
+stick_a_min_x . . . . . . common  int                  2     ***
+stick_a_min_y . . . . . . common  int                  2     ***
+stick_a_range_x . . . . . common  int                  2     ***
+stick_a_range_y . . . . . common  int                  2     ***
+stick_b_max_x . . . . . . common  int                  2     ***
+stick_b_max_y . . . . . . common  int                  2     ***
+stick_b_min_x . . . . . . common  int                  2     ***
+stick_b_min_y . . . . . . common  int                  2     ***
+stick_b_range_x . . . . . common  int                  2     ***
+stick_b_range_y . . . . . common  int                  2     ***
+
+Code size = 02ce (718)
+Data size = 01dd (477)
+Bss size  = 0000 (0)
+
+No errors detected

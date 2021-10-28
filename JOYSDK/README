@@ -1,0 +1,259 @@
+                                           A d v a n c e d
+                   ÜÜÜÜ  ÜÜÜÜÜ    ÜÜÜÜ  ÜÜ    ÜÜ Ü  ÜÜÜÜÜ
+                  Þ  ÜÜ  Þ    Ý  ÞÛ  ÛÝ ÞÛ    ÛÝ Û ÞÜÜÜÜÜ
+                  Þ    Ý ÞßßÛß  ÞÛ    ÛÝ ÞÛ  ÛÝ  Û       Ý
+                   ßßßß  ß   ß  ß      ß  ßßßß   ß  ßßßßß
+                  Advanced Gravis Computer Technology Ltd.
+
+      Fax (604) 435-9358                   BBS  (604) 431-5927 V32bis
+      Compuserve: GO PCVENB (71333,350)    InterNET EMail: tech@gravis.com
+      FidoNET: 1:153/978 or 1:153/878      SBCNET: 13:900/3
+
+                PC GamePad and Analog Pro SDK V1.1 (JOYSDK11.ZIP)
+
+                         1.0 Installation Notes
+                         2.0 Support
+                         3.0 What is Included with this SDK
+                         4.0 PC GamePad and PC Analog Pro Documentation
+
+1.0.0 Installation
+------------------
+Simply type INSTALL to install the SDK.  It will default to C:\JOYSDK
+and will require 100k of hard disk space.  All the documentation may
+be found in this README.
+
+2.0.0 Support
+-------------
+Due to the low cost of the PC GamePad and Analog Pro developers toolkit
+(free) we do not offer much in the way of technical support.  All the
+documentation, and source code 'as is'.  We do provide a Gravis
+programming message and file area on our BBS and on all the Gravis
+nodes.  Please refer to GRAVNODE.TXT for more information on how
+to reach us via electronic mail.
+
+3.0.0 What is Included with this SDK
+------------------------------------
+This SDK includes:
+
+   þ Technical information about the PC GamePad and Analog Pro
+   þ Technical information on the PC gameport
+   þ Pin out for a PC gameport
+   þ ASM and C routines on how to access the PC gameport
+
+4.0.0 PC GamePad and PC Analog Pro Documentation
+------------------------------------------------
+
+   PC GamePad and Analog Pro Technical Notes for Software Development
+
+Introduction
+============
+
+The PC GamePad and PC Analog Pro by Advanced Gravis Computer Technology
+Ltd. are position input devices for PCs and compatibles. The GamePad
+is a joystick-like device optimized for 'switch stick' mode games and
+user input applications.  While the Analog Pro is a proportional style
+stick built for software that require more precision, such as flight
+simulators. This following technical note provides a description of
+the GamePad and Analog Pro's hardware and software interface.  This
+note should assist software developers in implementing the Gravis PC
+GamePad and Analog Pro in their software projects.
+
+The Analog Pro
+==============
+
+The Analog Pro behaves much like a regular analog style joystick but
+with a few exceptions.  First the Analog Pro comes with 5 fire buttons,
+while most joysticks only come with 2.  Two of these buttons can be
+configured to act as button 1A,1B,2A or 2B.  See table below for an
+explanation on how this is done. You may also refer to your manual
+to find the layout and defaults for each of the 5 buttons.  Secondly
+the Analog Pro can use the Y-Axis of Joystick B as a throttle control.
+The user, by turning a dial on the Analog Pro, can change the value of
+this axis. It was intended to be used as a throttle control but could
+just as easily be used for some different purpose in your software.
+Below is a table explaining how to access these extra features of
+the Analog Pro.  Remember that only the 2 buttons on the base of the
+Analog Pro are selectable.  The 3 on the handle are fixed.
+
+        -- B & A               Analog Pro  Standard Gameport
+       ___                      ----------------------------------
+  C -> \ |                      X-Axis      Joystick A, X-Axis
+        ||       A = Button 1A  Y-Axis      Joystick A, Y-Axis
+   D - || - E  B = Button 2A  Throttle    Joystick B, Y-Axis
+     _Ü_||_Ü_    C = Button 1A  Button 1A   Joystick A, Button #1A
+     |______|                   Button 1B   Joystick A, Button #2A
+                                Button 2A   Joystick B, Button #1B
+     Left Side                  Button 2B   Joystick B, Button #2B
+
+The PC GamePad
+==============
+
+The PC GamePad is a device very similar to an anolog joystick.  It plugs
+into a standard PC gameport like a joystick.  The difference between a
+typical joystick and the GamePad exists mostly in the axis characteristics.
+Joysticks normally have X and Y axes that consist of continuously variable
+axis resistances, which in turn yields continuously variable X and Y
+positions.  The GamePad, however, provides 'fixed' resistances
+(non-proportional) for nine distinct GamePad controller positions
+(including center). The fixed resistances are set to approx. 0 ohms,
+approx. 50k ohms, and approx. 100k ohms.  Also, there are some differences
+in the buttons' arrangement. Four independant buttons are available, two
+of which can be configured as 'autofire' (slide switch selector).
+Furthermore, another slide switch allows the GamePad to be set for
+left-hand or right-hand use. Below is a table explaining how to read
+the extra buttons on the PC GamePad.
+
+                                PC GamePad
+                            4 Button   Turbo Fire  Standard Gameport
+   _____     ||             ----------------------------------------------
+  |     \____||________     X-Axis     X-Axis      Joystick A, X-Axis
+  |  __    GRAVIS      \    Y-Axis     Y-Axis      Joystick A, Y-Axis
+  | /  \  GamePad   B  |    Button A   Button A    Joystick A, Button #1A
+  | \__/          A   C|    Button B   Button B    Joystick A, Button #2A
+  |______________   D  |    Button D   Auto B      Joystick B, Button #1B
+                 \_____|    Button C   Auto A      Joystick B, Button #2B
+
+
+The Gameport
+============
+
+IBM defined the gameport as it exists on IBM PCs and compatibles.
+Their definition includes a connector spec, and a PC bus interface spec.
+Several PC and compatible product vendors provide gameport hardware such
+as multi-I/O cards, sound cards, and game cards. Some gameport hardware
+comes with features like computer speed compensation. For instance,
+Gravis makes a game card called the "Eliminator Game Card" that has
+speed compensation, and "UltraSound" a sound card that has a speed
+compensated gameport.
+
+The portion of the gameport interface of interest to programmers is the
+PC bus interface. The majority of this tech note deals with the programmers
+interface to the gameport, with some special references to the PC GamePad
+and Analog Pro.
+
+The gameport appears to the PC bus as a single read and write address at I/O
+address 201 hex, and is 8 bits wide. Bit 0 thru bit 3 represent the axes.
+Bit 4 thru bit 7 represent buttons. Button positions can be determined at
+any time by reading location 201 hex and testing bits 4,5,6 and 7 for
+high or low logic states. A high state being pressed and a low being
+not pressed. Because you may be dealing with micro switch style buttons
+you MUST DEBOUNCE in software.
+
+Reading gameport axis information is more complex.
+
+To gain a better grasp of the procedure for axis reading, the following
+discusses gameport operation.
+
+Joystick and other postional input devices are resistive transducers.
+Varying an axis position causes a varying resistance.
+The gameport connects to one end of this varying resistance.  Within
+the gameport circuitry exist 'one-shot' timers (flip-flop type logic
+device with a resistor & capacitor time out circuit) for each of the
+four axes. The joystick axis resistance determines the charge up time of
+the capacitor. Gameport axis information is represented by capacitor charge
+up time, and is determined by reading the axis timer status bits at
+address 201 hex. The axis bits are read as high when the capacitors
+are charging up, and the bits go low when the capacitor charges to a
+pre-determined level. Thus, the high time of the axis bits directly
+represents the axis resistance or position. The program can input axis
+position information into a program by repeatatively looping and
+reading the axis bits while high, and counting loop iterations.
+The higher the loop count, the higher the axis resistance.  Note that
+the gameport must be written to (output any value to address 201 hex.
+0 value recommended) in order to start a time out cycle.
+
+The following psuedocode provices a simplified example of how to
+read an axis:
+
+        clear loop_cout
+        output (0, 201h)
+        loop {
+            axis_bit = input(201h)
+            incr loop_count
+        } while (axis bit high)
+        return loop_count
+
+The previous example is perhaps the simplest possible implementation of the
+gameport's axis reading.  Included with this package are two software
+examples; assembler code driver for gameport reading and C code for
+implementing driver and providing operator interface.
+
+A typical gameport without speed compensation may have a time out
+period of approx. 1.3 millisecond for an axis resistance of 100k ohms.
+If you have an Apple/IBM combo stick this timeout can be as long as 2ms.  A
+disconnected or defective gameport would have a much greater or infinite
+time out period. The programmer should take this into account and limit
+the maximum number of axis read loop iterations to take no more than
+several milliseconds.  Generally, if a time out takes too long, zero
+should be returned.  Looping ought not continue endlessly as the computer
+will appear hung.  For more computer time efficiency, all axes COULD BE
+read CONCURRENTLY using a more sophisticated driver.  However, reading
+them consecutively is more reliable. The maximum times an axis needs to
+be read is 20/second.  10/second will work fine and you may be able to
+get away with 5/second.
+
+CAUTION: The faster the machine the faster the loop count!  Hence speed
+         compensating gameports.
+
+Optimizing for the PC GamePad
+=============================
+
+The provided examples are for general analog joystick applications.  It is
+possible to find optimizations for the PC GamePad.  Optimizations are
+possible because each GamePad axis has only 3 typical resistances
+(approx. 0 ohms, approx. 50k ohms, approx. 100k ohms).  Typical
+joystick drivers return analog values representing axis position.
+The programmer would have to do 'window' comparisons of values to
+determine the GamePad axis positions, which could consume valuable
+CPU time.  A PC GamePad specific driver could handle this window or
+limit comparison and return data relating to the nine possible
+positions only.
+
+
+GamePort - PC bus
+=================
+
+   Read bits at address 201 (gameport)
+   ===================================
+
+   =================================
+   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+   =================================
+     |   |   |   |   |   |   |   |
+     |   |   |   |   |   |   |   +---- Axis       Joystick A, X-Axis
+     |   |   |   |   |   |   +-------- Timer      Joystick A, Y-Axis
+     |   |   |   |   |   +------------ Status     Joystick B, X-Axis
+     |   |   |   |   +---------------- Bits       Joystick B, Y-Axis
+     |   |   |   |
+     |   |   |   +-------------------- Digital    Joystick A, Button #1
+     |   |   +------------------------ Button     Joystick A, Button #2
+     |   +---------------------------- Inputs     Joystick B, Button #1
+     +--------------------------------            Joystick B, Button #2
+
+
+   D15 Connector
+   =============
+
+                     FRONT (Female) on Gameport
+                     __________________________
+                     \ 8  7  6  5  4  3  2  1 /
+                      \ 9  10 11 12 13 14 15 /
+                       ----------------------
+
+     Pin #  PC GamePad    PC Analog Pro     Standard Joystick
+    --------------------------------------------------------------
+      1     +5v           +5v               +5v
+      2     Button A      Button A          Joystick A, Button #1A
+      3     X-Out         X-Out             Joystick A, X-Axis
+      4     Gnd           Gnd               Gnd
+      5     N/A           N/A               Gnd
+      6     Y-Out         Y-Out             Joystick A, Y-Axis
+      7     Button B      Button B          Joystick A, Button #2A
+      8     N/A           N/A               +5v
+      9     N/A           N/A               +5v
+      10    Button C      Button C          Joystick B, Button #1B
+      11    N/A           N/A               Joystick B, X-Axis
+      12    Chassis Gnd   Gnd               Gnd
+      13    N/A           Throttle Control  Joystick B, Y-Axis
+      14    Button D      Button D          Joystick B, Button #2B
+      15    N/A           N/A               +5v

@@ -1,0 +1,36 @@
+# makefile for Super Tank 1.0
+
+MODEL    = s
+CC       = bcc
+CFLAGS   = -M -llm -O2 -Qe- -Qx=0000 -v -c -m$(MODEL) -G -Ic:\prog\cpp\include
+ASM      = tasm
+ASMFLAGS = /ml /zi
+
+.c.obj:
+	$(CC) $(CFLAGS) { $< }   # the brackets just tell turbo make
+			       # to compile multiple files at once
+.asm.obj:
+	$(ASM) $(ASMFLAGS) $<
+
+tank.exe  : tank.obj hit.obj draw.obj shots.obj dotanks.obj tankhit.obj \
+            setcurs.obj putstr13.obj config.obj mode.obj joy.obj \
+	    dc13.obj pa13.obj gr_int9.obj gr.obj
+	$(CC) -M -llm -li -lv @tank.lnk
+
+joy.obj	:	joy.c joy.h
+	$(CC) $(CFLAGS) -Od joy.c
+
+config.obj	: config.c tankdefs.h extern.h types.h
+dc13.obj 	: dc13.asm
+dotanks.obj 	: dotanks.c tankdefs.h extern.h types.h joy.h
+draw.obj 	: draw.c tankdefs.h extern.h types.h
+gr.obj 		: gr.c gr.h
+gr_int9.obj 	: gr_int9.c
+hit.obj 	: hit.c tankdefs.h extern.h types.h
+mode.obj 	: mode.c
+pa13.obj 	: pa13.asm
+putstr13.obj 	: putstr13.c
+setcurs.obj 	: setcurs.c
+shots.obj 	: shots.c tankdefs.h extern.h types.h
+tank.obj 	: tank.c tankdefs.h tankpics.h types.h extern.h joy.h
+tankhit.obj 	: tankhit.c

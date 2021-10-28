@@ -1,0 +1,192 @@
+
+      ÕÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+      ³ş                                                            ş º
+      ³                                                               º
+      ³  ÛÛÛÛÛÛÛÛÛ°                   ÛÛ°                             º
+      ³  ÛÛ°    ÛÛ° ÛÛ°   ÛÛ° ÛÛÛÛÛÛ° ÛÛ°     ÛÛÛÛÛÛÛÛ° ÛÛ°     ÛÛ°   º
+      ³  ÛÛ°    ÛÛ° ÛÛ°   ÛÛ°   ÛÛ°   ÛÛ°     ÛÛ°   ÛÛ° ÛÛ°     ÛÛ°   º
+      ³  ÛÛ°    ÛÛ° ÛÛ°   ÛÛ°   ÛÛ°   ÛÛ°     ÛÛÛÛÛÛÛÛ° ÛÛ°     ÛÛ°   º
+      ³  ÛÛ°    ÛÛ° ÛÛ°   ÛÛ°   ÛÛ°   ÛÛ°     ÛÛ°   ÛÛ° ÛÛ° ÛÛ° ÛÛ°   º
+      ³  ÛÛÛÛÛÛÛÛÛ° ÛÛÛÛÛÛÛÛ°   ÛÛ°   ÛÛÛÛÛÛ° ÛÛ°   ÛÛ°  ÛÛÛ° ÛÛÛ°    º
+      ³                                                               º
+      ³                        T ù R ù I ù A ù D                      º
+      ³ş                                                            ş º
+      ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ½
+                               ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+                               º ù PRESENTS ù º
+                               ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+
+                         Palette tricks in assembler.
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ Created By   : Vulture                  Total Files  : 7
+ File Type    : VGA-intro source         Release Date : June 17th 1995
+ Difficulty   : Beginners level          Filename     : VGA-VUL2.ZIP
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Well, here's another fine source-code by Vulture. This time I will cover the
+ palette. I have used a copple of these routines before (VGA-VUL1.ZIP) but I
+ thought it might be usefull to explain things in detail. As always the code
+ is documented but there are a few things that may need sum more explanation.
+ That is what I am gonna do in this file...
+
+ The files included should be:
+
+     - fade.exe       =>    The executable
+     - fade.asm       =>    The full source
+     - picture.dat    =>    Data for picture
+     - palette.dat    =>    Data for palette
+     - make.bat       =>    Makes the .exe
+     - vulture.txt    =>    This text (yeah:))
+     - file_id.diz    =>    File description
+
+ Hmm, there probably are sum other files in here 2. Like bbs intros and stuff
+ like that... Never mind.
+
+ Ok, here we go! The palette is what makes you see the colors you see. (wow:))
+ As you probably know, we have 256 colors in MCGA mode. These colors are made
+ by a combination of red, green and blue values. You just mix them together.
+ These R,G,B values can reach a maximum of 63. For example: 63,63,63 gives us
+ a white color and 0,0,0 gives us black. Logically 35,35,35 would give us a
+ gray color. You can create various colors using the palette. A maximum of
+ 64*64*64=262144 combinations can be made. We choose 256 colors from these
+ 262144 possibilities and we have a created full palette we can use in our
+ code. Wow, great huh? :)
+
+ Well, let's say you have got a palette ready for use (like in a file). Then
+ you can use various techniques to set the palette. If you want to use it for
+ a picture, the simplest way to initialize it would be using the BIOS. Here
+ is the code to do that. Nothing to explain here... you are just using BIOS:
+
+    mov     ax,cs            ; Move cs into AX
+    mov     es,ax            ; es points to cs (where data is located)
+    mov     ax,1012h         ; Select write palette function
+    mov     bx,0             ; Start at color 0
+    mov     cx,256           ; Write 256 colors ( 0-255 )
+    lea     dx,Palette       ; es:dx points to palette data
+    int     10h              ; Call VID interrupt & set palette
+
+ Note that I use a label Palette here. You can ofcourse use your own labels.
+ Take a look at the source-code to see what I mean. I have used a file to
+ store all R,G,B values. Then I use the above routine to set the palette.
+ So, this is simple, eh? But only use this routine if you only want to show
+ a picture. It is very slow because you are using BIOS. And BIOS is slow....
+ If you want to rotate or fade the palette, you should use different methods.
+ Anyway, see the source for an example of the above method.
+
+ Well, on to the next part. We can also use internal registers to set the
+ palette. This is more difficult to understand. Here we go...
+ Let's suppose you have created an array with all R,G,B values in it. That
+ would mean 256*3=768 values. Well, first we must have a pointer which points
+ to the start of the array. Do it like this:
+
+    lea     bp,PaletteArray  ; Load offset array
+
+ Ok, that's easy stuff, right? On to the real work. To write the palette we
+ have to use port 03c8h. This port was designed for writing the palette. We
+ use dx to set the port. We also have to choose the color we want to start
+ writing at. We use al to do that. Well, here's the code to do it:
+
+    mov     dx,03c8h         ; Write register
+    mov     al,0             ; Start writing at color 0
+    out     dx,al            ; Give info to VGA
+
+ This selects port 03c8h and tells the VGA that we want to start writing at
+ color 0. Still easy? Well, then we have to pass all R,G,B data to the VGA.
+ To do that we have to use port 03c9h. That's our data port. Now we simply
+ go into a loop where we set all R,G,B values at once. First we set cx to
+ 768 because we want to set 768 values. Then set the port to 03c9h and go
+ into the loop. Inside the loop we increase the bp pointer to point to the
+ next cel. Here's the code:
+
+    mov     cx,768           ; Do all values
+    mov     dx,03c9h         ; Data register
+WriteAll:
+    mov     al,byte ptr [bp] ; Get the value
+    out     dx,al            ; Write to VGA
+    inc     bp               ; Point to next cel
+    loop    WriteAll
+
+ Well, this writes 768 values to the VGA. The total code for setting the
+ palette would now look like this:
+
+    lea     bp,PaletteArray  ; Load offset array
+    mov     dx,03c8h         ; Write register
+    mov     al,0             ; Start writing at color 0
+    out     dx,al            ; Give info to VGA
+    mov     cx,768           ; Do all values
+    mov     dx,03c9h         ; Data register
+WriteAll:
+    mov     al,byte ptr [bp] ; Get the value
+    out     dx,al            ; Write to VGA
+    inc     bp               ; Point to next cel
+    loop    WriteAll
+
+ Again, this code will set the palette values found in the PaletteArray using
+ the internal registers of the VGA. Fast stuff...
+
+ Right. What if you want to READ the palette? Well, then you use port 03c7h.
+ This is our read-register. Instead of grabbing a value out of the array and
+ writing it to the VGA, you read it from the VGA and put it IN the array.
+ But there is one trick to do here. If you read from the VGA you must be sure
+ that you do not write values above 63 to the array. Remember that a palette
+ value can only be between 0 and 63. Take a look at the following code:
+
+    in      al,dx            ; Get what's in the register (read)
+    and     al,00111111b     ; Mask of the upper 2 bits (value=0..63)
+
+ Ok, I suggest you try to code your own read routine. Shouldn't be that hard
+ to do. Just modify the write routine I gave you here. If you have troubles,
+ just take a glance at the fully documented sourcecode provided.
+
+ Keep in mind that there are indeed various otha ways to do this stuff. I
+ only explained the way I did it myself. I could have avoided a copple of
+ things but I decided to put it in there anyway. What's important is that
+ you fully understand those portwrites. The way you handle it from there
+ is totally up to you (hint: rep outsb).
+
+ Well, I could ofcourse explain how the palettefading works but I let you
+ figure that one out for yourself. I just don't feel like explaning it... :)
+ Just play a little with the routines found here and you'll get the hang
+ of it soon. Only way to learn things is by trial and error, right?
+
+ Ok, that's all I have to say for now. Check out the .asm file and learn from
+ it. Use it for yar own intros but don't just rip the code. Understand what
+ you are doing. Andeh... a greet would be appreciated. Simply ripping is lame.
+ But then again, if there weren't any lamerz, cewl people wouldn't have anyone
+ to loose their frustations on..... :)
+
+ Hmm, well, the following cr*p is supposed to be stated so here we go:
+ I (Vulture) take no responsibility for any mistakes found in this document.
+ So use at your own risk. If you spot errors or have something to add to the
+ text, don't hesitate to contact me. Phew, that's that... :)
+
+ Wanna contact Outlaw for any reason? Then leave mail at one of our distros.
+ Don't hestitate to mail Outlaw, coz we like to chat with otha scene-people.
+
+ Be seeing ya...
+
+
+         Signed:    Vulture / Outlaw Triad
+
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ Outlaw Triad Distros :  ³  Greetz from Outlaw:  ³  Releases sofar:
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+                         ³                       ³
+ ş    Blue Thunder   ş   ³   - DemoLisher        ³   ş MESSAGE  (dosscroller)
+ ş +31 (0)36-5346967 ş   ³   - ThunderHawk       ³
+                         ³   - Ash               ³   ş VGA-VUL1 (sources)
+                         ³   - The Machine       ³
+ ş     FireHouse     ş   ³   - XùNùTRiC          ³   ş CHAINDOC (textfile)
+ ş +31 (0)58-2661590 ş   ³   - Utter Chaos       ³
+                         ³   - Crusher           ³   ş VGA-VUL2 (sources)
+                         ³                       ³
+                         ³   - Critical          ³   ş BASICDOC (textfile)
+     Open for more!      ³   - Da Frisian Force  ³
+                         ³   - Tribal            ³   + various bbs-intros
+                         ³                       ³
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+                   ş (C) 1995  OùUùTùLùAùW   TùRùIùAùD ş
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ

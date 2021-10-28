@@ -1,0 +1,15 @@
+
+#include <stdio.h>
+#include "draw.h"
+
+
+
+main(void)
+{
+	ptext();
+	printf("Done\n");
+
+
+
+
+}

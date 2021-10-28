@@ -1,0 +1,241 @@
+Microsoft (R) Macro Assembler Version 5.10                  2/17/92 13:15:35
+                                                             Page     1-1
+
+
+						page	,132
+				;------------------------------------------------------------------------------
+				; Module Name: READAXIS.ASM
+				;
+				; Assembly language routine for reading joystick axis position
+				;
+				; Created: Feb 17th, 1992
+				; Author: Peter Wan
+				;
+				; Copyright (c) 1992 Advanced Gravis Computer Technology Limited
+				;
+				; Public Functions:
+				;	get_loop_count
+				;	read_axis
+				; Public Data:
+				;	None
+				; General Description:
+				;	This module contains functions to initialize itself and return
+				;	joystick axis position.
+				;------------------------------------------------------------------------------
+				
+						dosseg
+						.model	 medium
+				
+				;------------------------------------------------------------------------------
+				; Port address
+				;------------------------------------------------------------------------------
+ = 0201				GAMEPORT	equ	201h		;gameport address
+ = 0040				TIMER0		equ	40h		;8253 counter timer channel 0 address
+ = 0043				TIMER_CONTROL	equ	43h		;counter timer control register address
+				
+						.data
+ 0000  0000			max_loop_count	dw	?		;loop count for 3 milliseconds
+				
+						.code
+				
+				;------------------------------------------------------------------------------
+				; get_loop_count
+				;
+				; The purpose of this routine is to determine how many iteration of the
+				; following instruction loop can be accomplished in 3 milliseconds.  The number
+				; of iteration count will be different on computers running at different speed
+				; or computers with different processing unit.	In the read joystick axis
+				; routine, it uses a similar program loop to determine joystick axis position
+				; and the count results from this routine will be used to limit axis read time
+				; up to 3 millesecond maximum.	This routine must be called once at
+				; initialization time.
+				;
+				; Entry:
+				;	None
+				; Returns:
+				;	None
+				; Error Returns:
+				;	None
+Microsoft (R) Macro Assembler Version 5.10                  2/17/92 13:15:35
+                                                             Page     1-2
+
+
+				; Registers Preserved:
+				;	BX,SI,DI,BP,DS,ES
+				; Registers Destroyed:
+				;	AX,CX,DX
+				; Calls:
+				;	None
+				;------------------------------------------------------------------------------
+				
+						public	_get_loop_count
+ 0000				_get_loop_count proc
+ = [bp-2]			init_count	equ	<[bp-2]>
+ 0000  55					push	bp
+ 0001  8B EC					mov	bp,sp
+ 0003  83 EC 02					sub	sp,2		;2 bytes of local variable
+ 0006  C7 06 0000 R 0000			mov	max_loop_count,0;use loop count of 16 to start with
+ 000C  BA 0201					mov	dx,GAMEPORT	;gameport address
+ 000F				glc3:
+ 000F  B8 FF00					mov	ax,0ff00h
+ 0012  83 06 0000 R 10				add	max_loop_count,16
+ 0017  8B 0E 0000 R				mov	cx,max_loop_count
+ 001B  FA					cli			;system interrupt must be disabled
+ 001C  E6 43					out	TIMER_CONTROL,al;latch count in timer 0
+ 001E  EB 00					jmp	short $+2
+ 0020  E4 40					in	al,TIMER0	;read low byte of latched count
+ 0022  88 46 FE					mov	init_count,al	;save
+ 0025  EB 00					jmp	short $+2
+ 0027  E4 40					in	al,TIMER0	;read high byte
+ 0029  88 46 FF					mov	init_count+1,al ;save
+ 002C  EE					out	dx,al		;trigger gameport
+ 002D  EC					in	al,dx		;delay to allow gameport to switch on
+ 002E				glc4:					;the following loop exits only when CX
+									;reaches zero
+ 002E  EC					in	al,dx
+ 002F  0A C4					or	al,ah
+ 0031  E0 FB					loopnz	glc4
+ 0033  B8 0000					mov	ax,0
+ 0036  75 00					jnz	$+2
+ 0038  E6 43					out	TIMER_CONTROL,al;latch count in timer 0
+ 003A  FB					sti			;enable system interrupt
+ 003B  EB 00					jmp	short $+2
+ 003D  E4 40					in	al,TIMER0	;read low byte of latched count
+ 003F  8A E0					mov	ah,al
+ 0041  EB 00					jmp	short $+2
+ 0043  E4 40					in	al,TIMER0	;read high byte
+ 0045  86 C4					xchg	al,ah
+ 0047  2B 46 FE					sub	ax,init_count	;subtract count latched before
+									;entering loop by count just read
+ 004A  F7 D8					neg	ax
+ 004C  3D 1BF8					cmp	ax,7160 	;has it exceed 3 milliseconds?
+ 004F  7C BE					jl	glc3		;no, increment loop count by 16 and
+									;repeat process
+ 0051  8B E5					mov	sp,bp
+ 0053  5D					pop	bp
+ 0054  CB					ret
+Microsoft (R) Macro Assembler Version 5.10                  2/17/92 13:15:35
+                                                             Page     1-3
+
+
+ 0055				_get_loop_count endp
+				
+				;------------------------------------------------------------------------------
+				; _read_axis
+				;
+				; This routine will accept a number from 0 to 3 for returning joystick axis
+				; position for joystick A-X, A-Y, B-X, B-Y respectively.  After bit position
+				; of requested axis is determined, count reading in counter timer chip channel 0
+				; will be read and saved.  A write cycle to gameport address 201 hex will
+				; trigger and toggle all four axis lines from low to high state.  The duration
+				; of these individual line staying high is directly proportional to the
+				; position of joystick for the individual axis.  After the requested axis line
+				; has returned to the low state, count reading in counter timer chip will be
+				; read again. The real time count of the duration the requested axis has stayed
+				; high can be obtained from the difference of the two counts read.  Allowance
+				; for other axis to return to low state must also be provided before next read.
+				; Therefore, return to calling function can only be done at the end of the
+				; 3 milliseconds duration.  The real time count return to the callind function
+				; can have a value ranges from 1 to maximum of 7160 depending on the position
+				; of the joystick, value of capacitors used and threshold voltage set
+				; on the gamecard.  If the requested axis has not returned to the low state
+				; after 3 milliseconds, it is assumed that no joystick is connected to that
+				; axis and zero will be returned to the calling function.  During the
+				; 3 milliseconds duration, all interrupts except NMI will be disabled.
+				;
+				; Entry:
+				;	[bp+6] = Axis to be read
+				;		 0 = Joystick A - X axis
+				;		 1 = Joystick A - Y axis
+				;		 2 = Joystick B - X axis
+				;		 3 = Joystick B - Y axis
+				; Returns:
+				;	AX = Count ranges from 1 to maximun of 7160 corresponds to joystick
+				;	     position
+				; Error Returns:
+				;	AX = 0 if no joystick connected
+				; Registers Preserved:
+				;	BX,SI,DI,BP,DS,ES
+				; Registers Destroyed:
+				;	AX,CX,DX
+				; Calls:
+				;	None
+				;------------------------------------------------------------------------------
+				
+						public	_read_axis
+ 0055				_read_axis	proc
+ = [bp+6]			axis		equ	<[bp+6]>
+ = [bp-2]			init_count	equ	<[bp-2]>
+ 0055  55					push	bp
+ 0056  8B EC					mov	bp,sp
+ 0058  83 EC 02					sub	sp,2		;2 bytes of local variable
+ 005B  2B C0					sub	ax,ax		;determine bit position of axis to be
+ 005D  B4 01					mov	ah,1		;read
+ 005F  8B 4E 06					mov	cx,axis
+Microsoft (R) Macro Assembler Version 5.10                  2/17/92 13:15:35
+                                                             Page     1-4
+
+
+ 0062  D2 E4					shl	ah,cl
+ 0064  8B 0E 0000 R				mov	cx,max_loop_count;use 3 milliseconds loop count obtian
+									;at initailization
+ 0068  BA 0201					mov	dx,GAMEPORT	;gameport address
+ 006B  FA					cli			;disable interrupt
+ 006C  E6 43					out	TIMER_CONTROL,al;latch count in timer 0
+ 006E  EB 00					jmp	short $+2
+ 0070  E4 40					in	al,TIMER0	;read low byte of latched count
+ 0072  88 46 FE					mov	init_count,al	;save
+ 0075  EB 00					jmp	short $+2
+ 0077  E4 40					in	al,TIMER0	;read high byte
+ 0079  88 46 FF					mov	init_count+1,al ;save
+ 007C  EE					out	dx,al		;trigger gameport
+ 007D  EC					in	al,dx		;delay to allow gameport to switch on
+ 007E				ra1:
+ 007E  EC					in	al,dx		;read gameport
+ 007F  84 C4					test	al,ah		;requested axis return to low state or
+									;3 milliseconds passed?
+ 0081  E0 FB					loopnz	ra1		;no
+ 0083  B8 0000					mov	ax,0		;return 0 if 3 milliseconds passed and
+ 0086  75 1E					jnz	ra3		;requested axis not yet in low state
+ 0088  E6 43					out	TIMER_CONTROL,al;requested axis return to low state
+									;latch count in timer 0
+ 008A  EB 00					jmp	short $+2
+ 008C  E4 40					in	al,TIMER0	;read low byte of latched count
+ 008E  8A E0					mov	ah,al
+ 0090  EB 00					jmp	short $+2
+ 0092  E4 40					in	al,TIMER0	;read high byte
+ 0094  86 C4					xchg	al,ah
+ 0096  2B 46 FE					sub	ax,init_count	;obtain real time count of high state
+ 0099  F7 D8					neg	ax		;duration
+ 009B  E3 09					jcxz	ra3		;requested axis return to low state in
+									;exactly 3 milliseconds, all other axis
+									;should also have returned to low state
+									;by now
+ 009D  50					push	ax		;even though the requested axis has
+ 009E  B4 FF					mov	ah,0ffh 	;returned to the low state, other axis
+ 00A0				ra2:					;may still be in the high state, we
+ 00A0  EC					in	al,dx		;should wait till the end of the
+ 00A1  0A C4					or	al,ah		;3 milliseconds duration to allow the
+ 00A3  E0 FB					loopnz	ra2		;other axis to return to high state
+ 00A5  58					pop	ax		;before returning to the calling
+									;fucntion
+ 00A6				ra3:
+ 00A6  FB					sti			;enable system interrupt
+ 00A7  8B E5					mov	sp,bp
+ 00A9  5D					pop	bp
+ 00AA  CB					ret
+ 00AB				_read_axis	endp
+						end
+Microsoft (R) Macro Assembler Version 5.10                  2/17/92 13:15:35
+                                                             Page     1-5
+
+
+
+    212 Source  Lines
+    212 Total   Lines
+     29 Symbols
+
+  47354 + 430016 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

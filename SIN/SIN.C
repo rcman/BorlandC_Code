@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <math.h>
+#include <dos.h>
+
+
+
+
+
+char far *screen = MK_FP(0xa000,0);
+
+static char box[6][6] = {
+    { 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, },
+    { 0x0b, 0x00, 0x00, 0x00, 0x00, 0x0b, },
+    { 0x0b, 0x00, 0x00, 0x00, 0x00, 0x0b, },
+    { 0x0b, 0x00, 0x00, 0x00, 0x00, 0x0b, },
+    { 0x0b, 0x00, 0x00, 0x00, 0x00, 0x0b, },
+    { 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, },
+
+      };
+
+
+
+
+void PutShape(int x, double y);
+void Init_Mode(void);
+void Close_Mode(void);
+long double sinl(long double x);
+
+
+long double ya;
+long double yac;
+long double x,xo;
+long double y;
+long double yao;
+int offset;
+// double Radians;
+
+
+// Radians = Angle * 0.01745;
+
+void main(void)
+
+{
+       ya=0;
+       yac=1;
+
+       Init_Mode();
+
+       while(x<300)
+       {
+	yao=ya;
+	xo=x;
+
+	delay(50);
+
+
+	y = sin((ya * (M_PI/180)) * 60 + 100);
+
+	//y = y * sin(Radians) + y * cos(Radians);
+	//x = x * cos(Radians) - x * sin(Radians);
+
+
+
+	ya = ya + yac;
+
+	PutShape(x,y);
+
+	if (ya > 360)
+	ya=0;
+
+	x = x + 1;
+
+	y = sin((yao * (M_PI / 180)) * 60 +100);
+
+	PutShape(xo,y);
+
+
+
+
+       }
+
+
+       Close_Mode();
+
+
+
+
+}
+
+void PutShape(int x, double y)
+{
+
+	int a,b;
+	int off;
+
+	offset = (y*320)+x;
+
+	for (b=0;b<6;b++)
+	{
+		for (a=0;a<6;a++)
+		{
+		    *(screen+a+offset+off)=box[y][x];
+		}
+		off = off + 320;      //bytes to next line
+	}
+	offset=0;
+
+}
+
+void Init_Mode(void)
+{
+	printf("Initialize 320 x 200 256 Colours\n");
+	asm {
+		mov ax,0x13
+		int 0x10
+	     }
+}
+
+void Close_Mode(void)
+{
+
+	asm {
+		mov ax,0x03
+		int 0x10
+		}
+	printf("Graphics Screen Closed Thank You\n");
+
+}
+
+

@@ -1,0 +1,29 @@
+Keyboard INT 9 handler by Patch (hamell@cs.pdx.edu)             Avalanche coder
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+                                                               August 2nd, 1993
+
+Finally finished this thing ... small bug was nagging at me, and work puts
+a damper on the programming a little bit.  This code can handle multiple
+keypresses.  If you want to check for several keys being pressed at once,
+just check to see if each key index is set to 1.  Look at KEYTEST.C for
+a sample call from C.  It's very easy.
+
+Greets to: Gary Hildebrand - thanks for helping me fix my tiny bug   =)
+           Guildmaster - use this in Hard Vacuum now!
+           Errand - use this in your game too!
+
+           and everyone else that programs goodies ...
+
+If you like this code and use it (whether it be as-is or slightly
+modified), please credit me.  There is nothing worse than stealing
+someone's work without any recognition.
+
+To get more similar source and/or grafx/sound source, call my board:
+
+        Dead Man's Hand
+        503.288.9264
+        USR 16.8k DS
+        Grafx/sound programming and VGA demos
+
+Lee Hamel
+hamell@cs.pdx.edu
